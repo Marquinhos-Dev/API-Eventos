@@ -51,7 +51,7 @@ async function listarEventos() {
   };
 };
 
-app.post("/eventos", async (req, res) => {
+app.post('/eventos', async (req, res) => {
   try {
     const { nomeEvento, artista, data, horario } = req.body;
     const novoEvento = await criarEvento(nomeEvento, artista, data, horario);
@@ -100,20 +100,29 @@ async function atualizarEvento(id, nomeEvento, artista, data, horario) {
   };
 };
 
-app.delete('/eventos/:id', async (req, res) => {
+app.delete("/eventos/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const eventoRemovido = await Evento.findByIdAndRemove(id);
-    if (eventoRemovido) {
-      await Ingresso.deleteMany({ ID_evento: id });
-      res.status(200).json({ mensagem: 'Evento e ingressos relacionados removidos com sucesso', removido: eventoRemovido });
+    const eventoDeletado = await deletarEvento(id);
+    if (eventoDeletado) {
+      res.status(200).json({ mensagem: "Evento deletado com sucesso", deletado: eventoDeletado });
     } else {
-      res.status(404).json({ mensagem: 'Evento não encontrado' });
+      res.status(404).json({ mensagem: "Evento não encontrado" });
     };
   } catch (erro) {
-    res.status(500).json({ mensagem: 'Erro ao remover evento', erro: erro.message });
+    res.status(500).json({ mensagem: "Erro ao deletar evento", erro: erro.message });
   };
 });
+
+async function deletarEvento(id) {
+  try {
+    const eventoDeletado = await Evento.findByIdAndDelete(id);
+    return eventoDeletado;
+  } catch (erro) {
+    console.error("Erro ao deletar evento:", erro);
+    throw erro;
+  };
+};
 
 app.get('/ingressos', async (req, res) => {
   try {
@@ -133,7 +142,7 @@ async function listarIngressos() {
   };
 };
 
-app.post("/ingressos", async (req, res) => {
+app.post('/ingressos', async (req, res) => {
   try {
     const { ID_evento, nomeUtilizador, idade, tipo } = req.body;
     const novoIngresso = await criarIngresso(ID_evento, nomeUtilizador, idade, tipo);
@@ -145,7 +154,7 @@ app.post("/ingressos", async (req, res) => {
 
 async function criarIngresso(ID_evento, nomeUtilizador, idade, tipo) {
   try {
-    const novoIngresso = new Evento({ ID_evento, nomeUtilizador, idade, tipo });
+    const novoIngresso = new Ingresso({ ID_evento, nomeUtilizador, idade, tipo });
     return await novoIngresso.save();
   } catch (erro) {
     console.error("Erro ao criar ingresso:", erro);
@@ -182,19 +191,29 @@ async function atualizarIngresso(id, ID_evento, nomeUtilizador, idade, tipo) {
   };
 };
 
-app.delete('/ingressos/:id', async (req, res) => {
+app.delete("/ingressos/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const ingressoRemovido = await Ingresso.findByIdAndRemove(id);
-    if (ingressoRemovido) {
-      res.status(200).json({ mensagem: 'Ingresso removido com sucesso', removido: ingressoRemovido });
+    const ingressoDeletado = await deletarIngresso(id);
+    if (ingressoDeletado) {
+      res.status(200).json({ mensagem: "Ingresso deletado com sucesso", deletado: ingressoDeletado });
     } else {
-      res.status(404).json({ mensagem: 'Ingresso não encontrado' });
+      res.status(404).json({ mensagem: "Ingresso não encontrado" });
     };
   } catch (erro) {
-    res.status(500).json({ mensagem: 'Erro ao remover ingresso', erro: erro.message });
+    res.status(500).json({ mensagem: "Erro ao deletar ingresso", erro: erro.message });
   };
 });
+
+async function deletarIngresso(id) {
+  try {
+    const ingressoDeletado = await Ingresso.findByIdAndDelete(id);
+    return ingressoDeletado;
+  } catch (erro) {
+    console.error("Erro ao deletar ingresso:", erro);
+    throw erro;
+  };
+};
 
 // Inicializando o servidor
 const port = 3000;
