@@ -1,6 +1,6 @@
 
 // Importa a entidade Eventos
-const Evento = require('../Models/modelEventos')
+const Evento = require('../Models/modelEventos');
 
 // Função CRIAR
 async function criarEvento(req, res){
@@ -61,4 +61,4 @@ async function deletarEvento(req, res){
 };
 
 // Exporta as funções
-module.exports = {criarEvento,listarEventos,atualizarEvento,deletarEvento}
+module.exports = {criarEvento,listarEventos,atualizarEvento,deletarEvento};

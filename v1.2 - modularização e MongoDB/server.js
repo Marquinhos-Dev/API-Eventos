@@ -1,7 +1,7 @@
 
 // Importa o Mongoose e o APP
 const mongoose = require('mongoose');
-const app = require('./src/app')
+const app = require('./src/app');
 
 // Cria conexão com o MongoDB
 mongoose
